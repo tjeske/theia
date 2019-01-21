@@ -1,0 +1,33 @@
+{
+  "name": "@theia/xtext-slic-extension",
+  "keywords": [
+    "theia-extension"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+    "@theia/core": "^0.3.17",
+    "@theia/languages": "^0.3.17",
+    "@theia/monaco": "^0.3.17"
+  },
+  "devDependencies": {
+    "@theia/ext-scripts": "^0.3.17"
+  },
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "theiaext clean",
+    "build": "theiaext build",
+    "watch": "theiaext watch",
+    "test": "theiaext test",
+    "docs": "theiaext docs"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/frontend-extension",
+      "backend": "lib/node/backend-extension"
+    }
+  ]
+}

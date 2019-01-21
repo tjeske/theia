@@ -51,7 +51,8 @@
     "@theia/typescript": "^0.3.17",
     "@theia/userstorage": "^0.3.17",
     "@theia/variable-resolver": "^0.3.17",
-    "@theia/workspace": "^0.3.17"
+    "@theia/workspace": "^0.3.17",
+    "@theia/xtext-slic-extension": "^0.1.0"
   },
   "scripts": {
     "prepare": "yarn run clean && yarn build",
