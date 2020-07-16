@@ -5,7 +5,8 @@
   "description": "Theia - Example code to demonstrate Theia API",
   "dependencies": {
     "@theia/core": "^1.8.0",
-    "@theia/output": "^1.8.0"
+    "@theia/output": "^1.8.0",
+    "@theia/vsx-registry": "^1.8.0"
   },
   "theiaExtensions": [
     {
