@@ -392,6 +392,7 @@ export class WebviewWidget extends BaseWidget implements StatefulWidget {
 
     setHTML(value: string): void {
         this.html = this.preprocessHtml(value);
+        console.log('******** html: ' + this.html);
         this.doUpdateContent();
     }
 
