@@ -390,6 +390,7 @@
                     try {
                         const endpointUrl = new URL(data.endpoint);
                         csp.setAttribute('content', csp.getAttribute('content').replace(/(?:vscode|theia)-resource:(?=(\s|;|$))/g, endpointUrl.origin));
+                        console.log('>>> main.js:393 modify csp: ' + csp.outerHTML);
                     } catch (e) {
                         console.error('Could not rewrite csp');
                     }

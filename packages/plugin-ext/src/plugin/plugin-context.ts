@@ -389,6 +389,7 @@ export function createAPIFactory(
                 title: string,
                 showOptions: theia.ViewColumn | theia.WebviewPanelShowOptions,
                 options: theia.WebviewPanelOptions & theia.WebviewOptions = {}): theia.WebviewPanel {
+                console.log('>>> plugin-context.ts:392 createWebviewPanel viewType: ' + viewType + ', title: ' + title + ', options: ' + JSON.stringify(options));
                 return webviewExt.createWebview(viewType, title, showOptions, options, plugin);
             },
             registerWebviewPanelSerializer(viewType: string, serializer: theia.WebviewPanelSerializer): theia.Disposable {

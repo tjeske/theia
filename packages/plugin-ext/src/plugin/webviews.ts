@@ -43,6 +43,7 @@ export class WebviewsExtImpl implements WebviewsExt {
     }
 
     init(initData: WebviewInitData): void {
+        console.log('>>> plugin/webviews.ts:46 WebviewsExtImpl init initData: ' + JSON.stringify(initData));
         this.initData = initData;
     }
 
@@ -109,10 +110,12 @@ export class WebviewsExtImpl implements WebviewsExt {
         }
         const webviewShowOptions = toWebviewPanelShowOptions(showOptions);
         const viewId = v4();
+        console.log('>>> plugin/webviews.ts:113 createWebview plugin: ' + JSON.stringify(plugin));
         this.proxy.$createWebviewPanel(viewId, viewType, title, webviewShowOptions, WebviewImpl.toWebviewOptions(options, this.workspace, plugin));
-
         const webview = new WebviewImpl(viewId, this.proxy, options, this.initData, this.workspace, plugin);
+        console.log('>>> plugin/webviews.ts:116 create webview');
         const panel = new WebviewPanelImpl(viewId, this.proxy, viewType, title, webviewShowOptions, options, webview);
+        console.log('>>> plugin/webviews.ts:118 create panel');
         this.webviewPanels.set(viewId, panel);
         return panel;
     }
@@ -163,6 +166,7 @@ export class WebviewImpl implements theia.Webview {
         readonly plugin: Plugin
     ) {
         this._options = options;
+        console.log('>>> plugin/webviews.ts:169 create WebviewImpl options: ' + JSON.stringify(options) + ', initData: ' + JSON.stringify(initData));
     }
 
     dispose(): void {
@@ -179,23 +183,31 @@ export class WebviewImpl implements theia.Webview {
             // The scheme is important as we need to know if we are requesting a local or a remote resource.
             .replace('{{resource}}', resource.scheme + resource.toString().replace(/^\S+?:/, ''))
             .replace('{{uuid}}', this.viewId);
-        return URI.parse(uri);
+        const parsed = URI.parse(uri);
+        console.log('>>> plugin/webviews.ts:187 WebviewImpl > asWebviewUri resource: ' + JSON.stringify(resource) + ', return: ' + JSON.stringify(parsed));
+        return parsed;
     }
 
     get cspSource(): string {
-        return this.initData.webviewCspSource.replace('{{uuid}}', this.viewId);
+        const source = this.initData.webviewCspSource.replace('{{uuid}}', this.viewId);
+        console.log('>>> plugin/webviews.ts:192 getter cspSource: ' + source);
+        return source;
     }
 
     get html(): string {
         this.checkIsDisposed();
+        console.log('>>> plugin/webviews.ts:199 getter html: ' + this._html);
         return this._html;
     }
 
     set html(value: string) {
         this.checkIsDisposed();
+        console.log('>>> plugin/webviews.ts:205 setter html #1 value: ' + value);
         if (this._html !== value) {
+            console.log('>>> plugin/webviews.ts:207 setter html #2 _html: ' + this._html);
             this._html = value;
-            this.proxy.$setHtml(this.viewId, value);
+            console.log('>>> plugin/webviews.ts:209 setter html #3 _html: ' + this._html);
+            this.proxy.$setHtml(this.viewId, this._html); // replace value with _html
         }
     }
 
@@ -212,6 +224,7 @@ export class WebviewImpl implements theia.Webview {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     postMessage(message: any): PromiseLike<boolean> {
+        console.log('>>> plugin/webviews.ts:227 WebviewImpl > postMessage: ' + JSON.stringify(message));
         this.checkIsDisposed();
         return this.proxy.$postMessage(this.viewId, message);
     }
@@ -256,6 +269,7 @@ export class WebviewPanelImpl implements theia.WebviewPanel {
         private readonly _webview: WebviewImpl
     ) {
         this._showOptions = typeof showOptions === 'object' ? showOptions : { viewColumn: showOptions as theia.ViewColumn };
+        console.log('>>> plugin/webviews.ts:272 create WebviewPanelImpl');
     }
 
     dispose(): void {
@@ -305,6 +319,7 @@ export class WebviewPanelImpl implements theia.WebviewPanel {
 
     get webview(): WebviewImpl {
         this.checkIsDisposed();
+        console.log('>>> plugin/webviews.ts:322 WebviewPanelImpl > getter webview');
         return this._webview;
     }
 
@@ -380,6 +395,7 @@ export class WebviewPanelImpl implements theia.WebviewPanel {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     postMessage(message: any): PromiseLike<boolean> {
+        console.log('>>> plugin/webviews.ts:398 WebviewPanelImpl > postMessage: ' + JSON.stringify(message));
         this.checkIsDisposed();
         return this.proxy.$postMessage(this.viewId, message);
     }

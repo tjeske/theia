@@ -61,6 +61,7 @@ export class WebviewsMainImpl implements WebviewsMain, Disposable {
         showOptions: WebviewPanelShowOptions,
         options: WebviewPanelOptions & WebviewOptions
     ): Promise<void> {
+        console.log('>>> webviews-main.ts:64 $createWebviewPanel title: ' + title + ', options: ' + JSON.stringify(options));
         const view = await this.widgetManager.getOrCreateWidget<WebviewWidget>(WebviewWidget.FACTORY_ID, <WebviewWidgetIdentifier>{ id: panelId });
         this.hookWebview(view);
         view.viewType = viewType;
@@ -76,9 +77,13 @@ export class WebviewsMainImpl implements WebviewsMain, Disposable {
     }
 
     protected hookWebview(view: WebviewWidget): void {
+        console.log('>>> webviews-main.ts:80 $createWebviewPanel > hookWebview');
         const handle = view.identifier.id;
         this.toDispose.push(view.onDidChangeVisibility(() => this.updateViewState(view)));
-        this.toDispose.push(view.onMessage(data => this.proxy.$onMessage(handle, data)));
+        this.toDispose.push(view.onMessage(data => {
+            console.log('>>> webviews-main.ts:84 hookWebview > onMessage handle: ' + handle + ', data: ' + JSON.stringify(data));
+            this.proxy.$onMessage(handle, data);
+        }));
         view.disposed.connect(() => {
             if (this.toDispose.disposed) {
                 return;
@@ -161,6 +166,7 @@ export class WebviewsMainImpl implements WebviewsMain, Disposable {
     }
 
     async $setHtml(handle: string, value: string): Promise<void> {
+        console.log('>>> webviews-main.ts:169 $setHtml value: ' + value);
         const webview = await this.getWebview(handle);
         webview.setHTML(value);
     }
@@ -177,6 +183,7 @@ export class WebviewsMainImpl implements WebviewsMain, Disposable {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async $postMessage(handle: string, value: any): Promise<boolean> {
+        console.log('>>> webviews-main.ts:186 $postMessage handle: ' + handle + ', value: ' + JSON.stringify(value));
         const webview = await this.getWebview(handle);
         webview.sendMessage(value);
         return true;

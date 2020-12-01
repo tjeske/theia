@@ -390,7 +390,9 @@ export class WebviewWidget extends BaseWidget implements StatefulWidget {
     }
 
     setHTML(value: string): void {
+        console.log('>>> browser/webview.ts:393 WebviewWidget setHTML value: ' + value);
         this.html = this.preprocessHtml(value);
+        console.log('>>> browser/webview.ts:395 WebviewWidget setHTML preprocess html: ' + this.html);
         this.doUpdateContent();
     }
 
@@ -398,9 +400,15 @@ export class WebviewWidget extends BaseWidget implements StatefulWidget {
         return value
             .replace(/(["'])(?:vscode|theia)-resource:(\/\/([^\s\/'"]+?)(?=\/))?([^\s'"]+?)(["'])/gi, (_, startQuote, _1, scheme, path, endQuote) => {
                 if (scheme) {
-                    return `${startQuote}${this.externalEndpoint}/theia-resource/${scheme}${path}${endQuote}`;
+                    const s1 = `${startQuote}${this.externalEndpoint}/theia-resource/${scheme}${path}${endQuote}`;
+                    console.log('>>> browser/webview.ts:404 preprocessHtml found with scheme: ' + _);
+                    console.log('>>> browser/webview.ts:405 preprocessHtml return with scheme: ' + s1);
+                    return s1;
                 }
-                return `${startQuote}${this.externalEndpoint}/theia-resource/file${path}${endQuote}`;
+                const s2 = `${startQuote}${this.externalEndpoint}/theia-resource/file${path}${endQuote}`;
+                console.log('>>> browser/webview.ts:409 preprocessHtml found without scheme: ' + _);
+                console.log('>>> browser/webview.ts:410 preprocessHtml return without scheme: ' + s2);
+                return s2;
             });
     }
 
@@ -442,18 +450,25 @@ export class WebviewWidget extends BaseWidget implements StatefulWidget {
     }
 
     protected async loadResource(requestPath: string): Promise<void> {
+        console.log('>>> browser/webview.ts:453 loadResource requestPath: ' + requestPath);
         const normalizedUri = this.normalizeRequestUri(requestPath);
+        console.log('>>> browser/webview.ts:455 loadResource normalizedUri: ' + normalizedUri);
         // browser cache does not support file scheme, normalize to current endpoint scheme and host
         const cacheUrl = new Endpoint({ path: normalizedUri.path.toString() }).getRestUrl().toString();
-
+        console.log('>>> browser/webview.ts:458 loadResource cacheUrl: ' + cacheUrl);
+        console.log('>>> browser/webview.ts:459 loadResource this.contentOptions.localResourceRoots: ' + JSON.stringify(this.contentOptions.localResourceRoots));
         try {
             if (this.contentOptions.localResourceRoots) {
+                console.log('>>> browser/webview.ts:462 loadResource #1');
                 for (const root of this.contentOptions.localResourceRoots) {
+                    console.log('>>> browser/webview.ts:464 loadResource #2');
                     if (!new URI(root).path.isEqualOrParent(normalizedUri.path)) {
+                        console.log('>>> browser/webview.ts:466 loadResource #3');
                         continue;
                     }
                     let cached = await this.resourceCache.match(cacheUrl);
                     try {
+                        console.log('>>> browser/webview.ts:459 loadResource fileService.readFileStream: ' + normalizedUri);
                         const result = await this.fileService.readFileStream(normalizedUri, { etag: cached?.eTag });
                         const { buffer } = await BinaryBufferReadableStream.toBuffer(result.value);
                         cached = { body: () => buffer, eTag: result.etag };
@@ -486,19 +501,29 @@ export class WebviewWidget extends BaseWidget implements StatefulWidget {
     }
 
     protected normalizeRequestUri(requestPath: string): URI {
+        console.log('>>> browser/webview.ts:504 normalizeRequestUri requestPath: ' + requestPath);
         const normalizedPath = decodeURIComponent(requestPath);
-        const requestUri = new URI(normalizedPath.replace(/^\/(\w+)\/(.+)$/, (_, scheme, path) => scheme + ':/' + path));
+        console.log('>>> browser/webview.ts:506 normalizeRequestUri normalizedPath: ' + normalizedPath);
+        const requestUri = new URI(normalizedPath.replace(/^\/(\w+)\/(.+)$/, (_, scheme, path) => {
+            const s1 = scheme + ':/' + path;
+            console.log('>>> browser/webview.ts:509 normalizeRequestUri replace _: ' + _ + ', with: ' + s1);
+            return s1;
+        }));
+        console.log('>>> browser/webview.ts:512 normalizeRequestUri requestUri: ' + JSON.stringify(requestUri));
         if (requestUri.scheme !== 'theia-resource' && requestUri.scheme !== 'vscode-resource') {
+            console.log('>>> browser/webview.ts:514 normalizeRequestUri return #1');
             return requestUri;
         }
 
         // Modern vscode-resources uris put the scheme of the requested resource as the authority
         if (requestUri.authority) {
+            console.log('>>> browser/webview.ts:520 normalizeRequestUri return #2');
             return new URI(requestUri.authority + ':' + requestUri.path);
         }
 
         // Old style vscode-resource uris lose the scheme of the resource which means they are unable to
         // load a mix of local and remote content properly.
+        console.log('>>> browser/webview.ts:526 normalizeRequestUri return #3');
         return requestUri.withScheme('file');
     }
 
@@ -575,6 +600,7 @@ export class WebviewWidget extends BaseWidget implements StatefulWidget {
     }
 
     protected trace(kind: 'in' | 'out', channel: string, data?: any): void {
+        console.log('>>> browser/webview.ts:578 trace kind: ' + kind + ', channel: ' + channel + ', data: ' + JSON.stringify(data));
         const value = this.preferences['webview.trace'];
         if (value === 'off') {
             return;
