@@ -351,6 +351,7 @@ export class FileService {
      * @returns A `Disposable` that can be invoked to unregister the given provider.
      */
     registerProvider(scheme: string, provider: FileSystemProvider): Disposable {
+        console.log('+++ file-service.ts:354 register provider for scheme: ' + scheme);
         if (this.providers.has(scheme)) {
             throw new Error(`A filesystem provider for the scheme '${scheme}' is already registered.`);
         }
