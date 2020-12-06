@@ -898,7 +898,6 @@ export class FileService {
     }
 
     private async doReadAsFileStream(provider: FileSystemProviderWithFileReadWriteCapability | FileSystemProviderWithOpenReadWriteCloseCapability, resource: URI, options?: ReadFileOptions & { preferUnbuffered?: boolean }): Promise<FileStreamContent> {
-        console.log('+++ file-service.ts:901 doReadAsFileStream resource: ' + JSON.stringify(resource));
         if (options !== undefined) {
             console.log('+++ file-service.ts:903 doReadAsFileStream prefer unbuffered: ' + options.preferUnbuffered);
         }
