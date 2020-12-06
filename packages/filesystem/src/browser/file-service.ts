@@ -898,7 +898,7 @@ export class FileService {
     }
 
     private async doReadAsFileStream(provider: FileSystemProviderWithFileReadWriteCapability | FileSystemProviderWithOpenReadWriteCloseCapability, resource: URI, options?: ReadFileOptions & { preferUnbuffered?: boolean }): Promise<FileStreamContent> {
-
+        console.log('+++ file-service.ts:901 doReadAsFileStream options: ' + JSON.stringify(options) + ', resource: ' + JSON.stringify(resource));
         // install a cancellation token that gets cancelled
         // when any error occurs. this allows us to resolve
         // the content of the file while resolving metadata
@@ -919,6 +919,7 @@ export class FileService {
             // otherwise, we let it run in parallel to the file reading for
             // optimal startup performance.
             if (options && typeof options.etag === 'string' && options.etag !== ETAG_DISABLED) {
+                console.log('+++ file-service.ts:922 await statPromise');
                 await statPromise;
             }
 
@@ -926,16 +927,19 @@ export class FileService {
 
             // read unbuffered (only if either preferred, or the provider has no buffered read capability)
             if (!(hasOpenReadWriteCloseCapability(provider) || hasFileReadStreamCapability(provider)) || (hasReadWriteCapability(provider) && options?.preferUnbuffered)) {
+                console.log('+++ file-service.ts:930 #1');
                 fileStreamPromise = this.readFileUnbuffered(provider, resource, options);
             }
 
             // read streamed (always prefer over primitive buffered read)
             else if (hasFileReadStreamCapability(provider)) {
+                console.log('+++ file-service.ts:936 #2');
                 fileStreamPromise = Promise.resolve(this.readFileStreamed(provider, resource, cancellableSource.token, options));
             }
 
             // read buffered
             else {
+                console.log('+++ file-service.ts:942 #3');
                 fileStreamPromise = Promise.resolve(this.readFileBuffered(provider, resource, cancellableSource.token, options));
             }
 

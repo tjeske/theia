@@ -762,7 +762,9 @@ export interface FileSystemProviderWithFileReadWriteCapability extends FileSyste
 }
 
 export function hasReadWriteCapability(provider: FileSystemProvider): provider is FileSystemProviderWithFileReadWriteCapability {
-    return !!(provider.capabilities & FileSystemProviderCapabilities.FileReadWrite);
+    const val = !!(provider.capabilities & FileSystemProviderCapabilities.FileReadWrite);
+    console.log('+++ files.ts:766 hasReadWriteCapability: ' + val);
+    return val;
 }
 
 /**
@@ -828,7 +830,9 @@ export interface FileSystemProviderWithOpenReadWriteCloseCapability extends File
 }
 
 export function hasOpenReadWriteCloseCapability(provider: FileSystemProvider): provider is FileSystemProviderWithOpenReadWriteCloseCapability {
-    return !!(provider.capabilities & FileSystemProviderCapabilities.FileOpenReadWriteClose);
+    const val = !!(provider.capabilities & FileSystemProviderCapabilities.FileOpenReadWriteClose);
+    console.log('+++ files.ts:832 hasOpenReadWriteCloseCapability: ' + val);
+    return val;
 }
 
 /**
@@ -846,7 +850,9 @@ export interface FileSystemProviderWithFileReadStreamCapability extends FileSyst
 }
 
 export function hasFileReadStreamCapability(provider: FileSystemProvider): provider is FileSystemProviderWithFileReadStreamCapability {
-    return !!(provider.capabilities & FileSystemProviderCapabilities.FileReadStream);
+    const val = !!(provider.capabilities & FileSystemProviderCapabilities.FileReadStream);
+    console.log('+++ files.ts:852 hasFileReadStreamCapability: ' + val);
+    return val;
 }
 
 export function markAsFileSystemProviderError(error: Error, code: FileSystemProviderErrorCode): Error {
