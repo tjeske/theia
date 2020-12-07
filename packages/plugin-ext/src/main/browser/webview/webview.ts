@@ -504,7 +504,7 @@ export class WebviewWidget extends BaseWidget implements StatefulWidget {
         console.log('>>> browser/webview.ts:504 normalizeRequestUri requestPath: ' + requestPath);
         const normalizedPath = decodeURIComponent(requestPath);
         console.log('>>> browser/webview.ts:506 normalizeRequestUri normalizedPath: ' + normalizedPath);
-        const requestUri = new URI(normalizedPath.replace(/^\/([a-zA-Z0-9.\-+]+)\/(.+)/, (_, scheme, path) => {
+        const requestUri = new URI(normalizedPath.replace(/^\/([a-zA-Z0-9.\-+]+)\/(.+)$/, (_, scheme, path) => {
             const s1 = scheme + ':/' + path;
             console.log('>>> browser/webview.ts:509 normalizeRequestUri replace _: ' + _ + ', with: ' + s1);
             return s1;
