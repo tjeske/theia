@@ -105,6 +105,7 @@ export interface PluginPackageCommand {
     title: string;
     category?: string;
     icon?: string | { light: string; dark: string; };
+    enablement?: string;
 }
 
 export interface PluginPackageMenu {
@@ -619,6 +620,7 @@ export interface PluginCommand {
     category?: string;
     iconUrl?: IconUrl;
     themeIcon?: string;
+    enablement?: string;
 }
 
 export type IconUrl = string | { light: string; dark: string; };
@@ -631,6 +633,18 @@ export interface Menu {
     alt?: string;
     group?: string;
     when?: string;
+}
+
+/**
+ * Keybinding contribution
+ */
+export interface Keybinding {
+    keybinding?: string;
+    command: string;
+    when?: string;
+    mac?: string;
+    linux?: string;
+    win?: string;
 }
 
 /**

@@ -307,7 +307,7 @@ export class TheiaPluginScanner implements PluginScanner {
         return contributions;
     }
 
-    protected readCommand({ command, title, category, icon }: PluginPackageCommand, pck: PluginPackage): PluginCommand {
+    protected readCommand({ command, title, category, icon, enablement }: PluginPackageCommand, pck: PluginPackage): PluginCommand {
         let themeIcon: string | undefined;
         let iconUrl: IconUrl | undefined;
         if (icon) {
@@ -324,7 +324,7 @@ export class TheiaPluginScanner implements PluginScanner {
                 };
             }
         }
-        return { command, title, category, iconUrl, themeIcon };
+        return { command, title, category, iconUrl, themeIcon, enablement };
     }
 
     protected toPluginUrl(pck: PluginPackage, relativePath: string): string {
