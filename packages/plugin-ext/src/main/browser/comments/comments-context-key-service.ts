@@ -28,9 +28,14 @@ export class CommentsContextKeyService {
     readonly onDidChange = this.onDidChangeEmitter.event;
     protected _commentIsEmpty: ContextKey<boolean>;
     protected _commentController: ContextKey<string | undefined>;
+    protected _comment: ContextKey<string | undefined>;
 
     get commentController(): ContextKey<string | undefined> {
         return this._commentController;
+    }
+
+    get comment(): ContextKey<string | undefined> {
+        return this._comment;
     }
 
     get commentIsEmpty(): ContextKey<boolean> {
@@ -41,6 +46,7 @@ export class CommentsContextKeyService {
     protected init(): void {
         this.contextKeys.add('commentIsEmpty');
         this._commentController = this.contextKeyService.createKey<string | undefined>('commentController', undefined);
+        this._comment = this.contextKeyService.createKey<string | undefined>('comment', undefined);
         this._commentIsEmpty = this.contextKeyService.createKey<boolean>('commentIsEmpty', true);
         this.contextKeyService.onDidChange(event => {
             if (event.affects(this.contextKeys)) {

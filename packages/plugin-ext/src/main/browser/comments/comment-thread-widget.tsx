@@ -451,6 +451,7 @@ export class ReviewComment<P extends ReviewComment.Props = ReviewComment.Props> 
         const { comment, contextKeyService, menus, commands, commentThread } = this.props;
         const commentUniqueId = comment.uniqueIdInThread;
         const { hover } = this.state;
+        contextKeyService.comment.set(comment.contextValue);
         return <div className={'review-comment'}
                     tabIndex={-1}
                     aria-label={`${comment.userName}, ${comment.body.value}`}
@@ -467,7 +468,7 @@ export class ReviewComment<P extends ReviewComment.Props = ReviewComment.Props> 
                     <div className={'theia-comments-inline-actions-container'}>
                         <div className={'theia-comments-inline-actions'} role={'toolbar'}>
                             {hover && menus.getMenu(COMMENT_TITLE).children.map((node, index) => node instanceof ActionMenuNode &&
-                                <CommentsInlineAction key={index} {...{ node, commands, commentThread, commentUniqueId }} />)}
+                                <CommentsInlineAction key={index} {...{ node, commands, commentThread, commentUniqueId, contextKeyService }} />)}
                         </div>
                     </div>
                 </div>
@@ -562,12 +563,16 @@ namespace CommentsInlineAction {
         commentThread: CommentThread;
         commentUniqueId: number;
         commands: CommandRegistry;
+        contextKeyService: CommentsContextKeyService;
     }
 }
 
 export class CommentsInlineAction extends React.Component<CommentsInlineAction.Props> {
     render(): React.ReactNode {
-        const { node, commands, commentThread, commentUniqueId } = this.props;
+        const { node, commands, contextKeyService, commentThread, commentUniqueId } = this.props;
+        if (node.action.when && !contextKeyService.match(node.action.when)) {
+            return false;
+        }
         return <div className='theia-comments-inline-action'>
             <a className={node.icon}
                title={node.label}
