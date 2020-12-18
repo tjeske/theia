@@ -77,12 +77,7 @@ export class CommentsContribution {
                 }
                 disposables.push(editor.onMouseDown(e => this.onEditorMouseDown(e)));
                 disposables.push(this.commentService.onDidUpdateCommentThreads(async e => {
-                        const editorModel = this.editor && this.editor.getModel();
-                        const editorURI = this.editor && editorModel && editorModel.uri;
-                        if (!editorURI) {
-                            return;
-                        }
-
+                        const editorURI = editor.document.uri;
                         const commentInfo = this.commentInfos.filter(info => info.owner === e.owner);
                         if (!commentInfo || !commentInfo.length) {
                             return;
