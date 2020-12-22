@@ -275,6 +275,7 @@ export class CommentThreadWidget extends BaseWidget {
                         contextKeyService={this.contextKeyService}
                         menus={this.menus}
                         comment={comment}
+                        commentForm={this.commentFormRef}
                         commands={this.commands}
                         commentThread={this._commentThread}
                     />)}
@@ -386,6 +387,9 @@ export class CommentForm<P extends CommentForm.Props = CommentForm.Props> extend
                                   onInput={this.onInput}
                                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                   onBlur={(event: any) => {
+                                      if (event.target.value.length > 0) {
+                                          return;
+                                      }
                                       if (event.relatedTarget && event.relatedTarget.className === 'comments-button comments-text-button theia-button') {
                                           this.state = { expanded: false };
                                           return;
@@ -414,6 +418,7 @@ namespace ReviewComment {
         commentThread: CommentThread;
         contextKeyService: CommentsContextKeyService;
         commands: CommandRegistry;
+        commentForm: RefObject<CommentForm>;
     }
 
     export interface State {
@@ -448,7 +453,7 @@ export class ReviewComment<P extends ReviewComment.Props = ReviewComment.Props> 
     protected hideHover = () => this.setState({ hover: false });
 
     render(): React.ReactNode {
-        const { comment, contextKeyService, menus, commands, commentThread } = this.props;
+        const { comment, commentForm, contextKeyService, menus, commands, commentThread } = this.props;
         const commentUniqueId = comment.uniqueIdInThread;
         const { hover } = this.state;
         contextKeyService.comment.set(comment.contextValue);
@@ -478,6 +483,7 @@ export class ReviewComment<P extends ReviewComment.Props = ReviewComment.Props> 
                                       menus={menus}
                                       comment={comment}
                                       commentThread={commentThread}
+                                      commentForm={commentForm}
                                       commands={commands}/>
             </div>
         </div>;
@@ -511,19 +517,31 @@ namespace CommentEditContainer {
         menus: MenuModelRegistry,
         comment: Comment;
         commentThread: CommentThread;
+        commentForm: RefObject<CommentForm>;
         commands: CommandRegistry;
     }
 }
 
 export class CommentEditContainer extends React.Component<CommentEditContainer.Props> {
     private readonly inputRef: RefObject<HTMLTextAreaElement> = React.createRef<HTMLTextAreaElement>();
+    private dirtyCommentMode: CommentMode | undefined;
+    private dirtyCommentFormState: boolean | undefined;
 
     componentDidUpdate(prevProps: Readonly<CommentEditContainer.Props>, prevState: Readonly<{}>): void {
+        const commentFormState = this.props.commentForm.current?.state;
+        const mode = this.props.comment.mode;
+        if (this.dirtyCommentMode !== mode || (this.dirtyCommentFormState !== commentFormState?.expanded && !commentFormState?.expanded)) {
             const currentInput = this.inputRef.current;
             if (currentInput) {
-                currentInput.focus();
-                currentInput.setSelectionRange(currentInput.value.length, currentInput.value.length);
+                // Wait for the widget to be rendered.
+                setTimeout(() => {
+                    currentInput.focus();
+                    currentInput.setSelectionRange(currentInput.value.length, currentInput.value.length);
+                }, 50);
             }
+        }
+        this.dirtyCommentMode = mode;
+        this.dirtyCommentFormState = commentFormState?.expanded;
     }
 
     render(): React.ReactNode {
