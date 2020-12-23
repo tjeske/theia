@@ -79,6 +79,7 @@ export class DebugConfigurationManager {
     protected initialized: Promise<void>;
     @postConstruct()
     protected async init(): Promise<void> {
+        console.error('=========================== DEBUG CONFIG MANAGER === init ');
         this.debugConfigurationTypeKey = this.contextKeyService.createKey<string>('debugConfigurationType', undefined);
         this.initialized = this.updateModels();
         this.preferences.onPreferenceChanged(e => {
@@ -90,7 +91,9 @@ export class DebugConfigurationManager {
 
     protected readonly models = new Map<string, DebugConfigurationModel>();
     protected updateModels = debounce(async () => {
+        console.error('==== DEBUG CONFIG MANAGER === update models ');
         const roots = await this.workspaceService.roots;
+        console.error('==== DEBUG CONFIG MANAGER === update models ', roots);
         const toDelete = new Set(this.models.keys());
         for (const rootStat of roots) {
             const key = rootStat.resource.toString();
@@ -117,6 +120,7 @@ export class DebugConfigurationManager {
     protected *getAll(): IterableIterator<DebugSessionOptions> {
         for (const model of this.models.values()) {
             for (const configuration of model.configurations) {
+                console.error('////////// ', configuration);
                 yield {
                     configuration,
                     workspaceFolderUri: model.workspaceFolderUri
@@ -149,6 +153,7 @@ export class DebugConfigurationManager {
         this.updateCurrent(option);
     }
     protected updateCurrent(options: DebugSessionOptions | undefined = this._currentOptions): void {
+        console.error('==== DEBUG CONFIG MANAGER === update CURRENT ', options);
         this._currentOptions = options
             && this.find(options.configuration.name, options.workspaceFolderUri);
         if (!this._currentOptions) {

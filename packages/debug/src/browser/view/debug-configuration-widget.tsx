@@ -77,11 +77,13 @@ export class DebugConfigurationWidget extends ReactWidget {
     protected setStepRef = (stepRef: DebugAction | null) => this.stepRef = stepRef || undefined;
 
     render(): React.ReactNode {
+        console.error('+++++++++++++++++++++++ RENDER DEBUG ');
         const { options } = this;
+        console.error('+++ RENDER DEBUG +++ options ', options);
         return <React.Fragment>
             <DebugAction run={this.start} label='Start Debugging' iconClass='start' ref={this.setStepRef} />
             <select className='theia-select debug-configuration' value={this.currentValue} onChange={this.setCurrentConfiguration}>
-                {options.length ? options : <option value='__NO_CONF__'>No Configurations</option>}
+                {options.length ? options : <option value='__NO_CONF__'>No Configuration</option>}
                 <option disabled>{'Add Configuration...'.replace(/./g, '-')}</option>
                 <option value='__ADD_CONF__'>Add Configuration...</option>
             </select>
@@ -94,14 +96,18 @@ export class DebugConfigurationWidget extends ReactWidget {
         return current ? this.toValue(current) : '__NO_CONF__';
     }
     protected get options(): React.ReactNode[] {
+        console.error('+++ GET options ', this.manager.all);
         return Array.from(this.manager.all).map((options, index) =>
             <option key={index} value={this.toValue(options)}>{this.toName(options)}</option>
         );
     }
     protected toValue({ configuration, workspaceFolderUri }: DebugSessionOptions): string {
+        console.error('!!!!!!!!!!!!!!!!!!!!! to value ', configuration);
         if (!workspaceFolderUri) {
+            console.error('!!! to value !!! RETURN ', configuration.name);
             return configuration.name;
         }
+        console.error('!!! to value !!! RETURN 2 ', configuration.name + '__CONF__' + workspaceFolderUri);
         return configuration.name + '__CONF__' + workspaceFolderUri;
     }
     protected toName({ configuration, workspaceFolderUri }: DebugSessionOptions): string {
