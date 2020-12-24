@@ -97,6 +97,8 @@ import { LanguageService } from './language-service';
 import { EncodingRegistry } from './encoding-registry';
 import { EncodingService } from '../common/encoding-service';
 import { AuthenticationService, AuthenticationServiceImpl } from '../browser/authentication-service';
+import { DecorationsServiceImpl } from '../browser/decorations/decorations-service';
+import { DecorationsService } from '../browser/decorations/decorations-protocol';
 
 export { bindResourceProvider, bindMessageService, bindPreferenceService };
 
@@ -342,4 +344,5 @@ export const frontendApplicationModule = new ContainerModule((bind, unbind, isBo
     bind(ContextMenuContext).toSelf().inSingletonScope();
 
     bind(AuthenticationService).to(AuthenticationServiceImpl).inSingletonScope();
+    bind(DecorationsService).to(DecorationsServiceImpl).inSingletonScope();
 });
