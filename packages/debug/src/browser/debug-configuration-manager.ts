@@ -93,16 +93,23 @@ export class DebugConfigurationManager {
     protected updateModels = debounce(async () => {
         console.error('==== DEBUG CONFIG MANAGER === update models ');
         const roots = await this.workspaceService.roots;
-        console.error('==== DEBUG CONFIG MANAGER === update models ', roots);
+        console.error('==== DEBUG CONFIG MANAGER === update models === roots ', roots);
         const toDelete = new Set(this.models.keys());
         for (const rootStat of roots) {
             const key = rootStat.resource.toString();
+            console.error('==== DEBUG CONFIG MANAGER === update models === key ', key);
             toDelete.delete(key);
             if (!this.models.has(key)) {
+                console.error('==== DEBUG CONFIG MANAGER === update models === key NOT this.models.has(key) ', key);
                 const model = new DebugConfigurationModel(key, this.preferences);
-                model.onDidChange(() => this.updateCurrent());
+                model.onDidChange(() => {
+                    console.error('==== DEBUG CONFIG MANAGER === update models === model.onDidChange !!!!! ');
+                    this.updateCurrent();
+                });
                 model.onDispose(() => this.models.delete(key));
                 this.models.set(key, model);
+            } else {
+                console.error('==== DEBUG CONFIG MANAGER === update models === key HAS this.models.has(key) ', key);
             }
         }
         for (const uri of toDelete) {
@@ -153,7 +160,7 @@ export class DebugConfigurationManager {
         this.updateCurrent(option);
     }
     protected updateCurrent(options: DebugSessionOptions | undefined = this._currentOptions): void {
-        console.error('==== DEBUG CONFIG MANAGER === update CURRENT ', JSON.stringify(options));
+        console.error('==== DEBUG CONFIG MANAGER === update CURRENT ', options ? options.configuration : undefined);
         this._currentOptions = options
             && this.find(options.configuration.name, options.workspaceFolderUri);
         if (!this._currentOptions) {

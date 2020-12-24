@@ -35,10 +35,15 @@ export class DebugConfigurationModel implements Disposable {
         readonly workspaceFolderUri: string,
         protected readonly preferences: PreferenceService
     ) {
+        console.error('!!!!!!!!!!!!!!!!!!!! NEW DebugConfigurationModel !!!!!!!!!!!!!!!1 ');
         this.reconcile();
         this.toDispose.push(this.preferences.onPreferenceChanged(e => {
+            console.error('!!! DebugConfigurationModel !!! onPreferenceChanged ', e.preferenceName);
             if (e.preferenceName === 'launch' && e.affects(workspaceFolderUri)) {
+                console.error('!!! DebugConfigurationModel !!! e.affects(workspaceFolderUri ', workspaceFolderUri);
                 this.reconcile();
+            } else {
+                console.error('!!! DebugConfigurationModel !!! NOT e.affects(workspaceFolderUri ', workspaceFolderUri);
             }
         }));
     }
