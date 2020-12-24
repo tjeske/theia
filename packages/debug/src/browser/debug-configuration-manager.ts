@@ -93,7 +93,7 @@ export class DebugConfigurationManager {
     protected updateModels = debounce(async () => {
         console.error('==== DEBUG CONFIG MANAGER === update models ');
         const roots = await this.workspaceService.roots;
-        console.error('==== DEBUG CONFIG MANAGER === update models ', roots);
+        console.error('==== DEBUG CONFIG MANAGER === update models ', JSON.stringify(roots));
         const toDelete = new Set(this.models.keys());
         for (const rootStat of roots) {
             const key = rootStat.resource.toString();
@@ -120,7 +120,7 @@ export class DebugConfigurationManager {
     protected *getAll(): IterableIterator<DebugSessionOptions> {
         for (const model of this.models.values()) {
             for (const configuration of model.configurations) {
-                console.error('////////// ', configuration);
+                console.error('////////// ', JSON.stringify(configuration));
                 yield {
                     configuration,
                     workspaceFolderUri: model.workspaceFolderUri
@@ -153,7 +153,7 @@ export class DebugConfigurationManager {
         this.updateCurrent(option);
     }
     protected updateCurrent(options: DebugSessionOptions | undefined = this._currentOptions): void {
-        console.error('==== DEBUG CONFIG MANAGER === update CURRENT ', options);
+        console.error('==== DEBUG CONFIG MANAGER === update CURRENT ', JSON.stringify(options));
         this._currentOptions = options
             && this.find(options.configuration.name, options.workspaceFolderUri);
         if (!this._currentOptions) {

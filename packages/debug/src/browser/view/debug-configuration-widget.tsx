@@ -52,6 +52,7 @@ export class DebugConfigurationWidget extends ReactWidget {
 
     @postConstruct()
     protected init(): void {
+        console.error('!!!!!!!!!!!!!!!!!!!!!!!! DebugConfigurationWidget +++ init  ');
         this.addClass('debug-toolbar');
         this.toDispose.push(this.manager.onDidChange(() => this.update()));
         this.toDispose.push(this.workspaceService.onWorkspaceChanged(() => this.update()));
@@ -79,7 +80,7 @@ export class DebugConfigurationWidget extends ReactWidget {
     render(): React.ReactNode {
         console.error('+++++++++++++++++++++++ RENDER DEBUG ');
         const { options } = this;
-        console.error('+++ RENDER DEBUG +++ options ', options);
+        console.error('+++ RENDER DEBUG +++ options ', JSON.stringify(options));
         return <React.Fragment>
             <DebugAction run={this.start} label='Start Debugging' iconClass='start' ref={this.setStepRef} />
             <select className='theia-select debug-configuration' value={this.currentValue} onChange={this.setCurrentConfiguration}>
@@ -96,13 +97,13 @@ export class DebugConfigurationWidget extends ReactWidget {
         return current ? this.toValue(current) : '__NO_CONF__';
     }
     protected get options(): React.ReactNode[] {
-        console.error('+++ GET options ', this.manager.all);
+        console.error('+++ GET options ', JSON.stringify(Array.from(this.manager.all)));
         return Array.from(this.manager.all).map((options, index) =>
             <option key={index} value={this.toValue(options)}>{this.toName(options)}</option>
         );
     }
     protected toValue({ configuration, workspaceFolderUri }: DebugSessionOptions): string {
-        console.error('!!!!!!!!!!!!!!!!!!!!! to value ', configuration);
+        console.error('!!!!!!!!!!!!!!!!!!!!! to value ', JSON.stringify(configuration));
         if (!workspaceFolderUri) {
             console.error('!!! to value !!! RETURN ', configuration.name);
             return configuration.name;
@@ -119,6 +120,7 @@ export class DebugConfigurationWidget extends ReactWidget {
 
     protected readonly setCurrentConfiguration = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const value = event.currentTarget.value;
+        console.error('!!!!!!!!!!!!!!!!!!!!! set current configuration ', value);
         if (value === '__ADD_CONF__') {
             this.manager.addConfiguration();
         } else {
