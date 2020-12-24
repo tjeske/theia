@@ -54,9 +54,18 @@ export class DebugConfigurationWidget extends ReactWidget {
     protected init(): void {
         console.error('!!!!!!!!!!!!!!!!!!!!!!!! DebugConfigurationWidget +++ init  ');
         this.addClass('debug-toolbar');
-        this.toDispose.push(this.manager.onDidChange(() => this.update()));
-        this.toDispose.push(this.workspaceService.onWorkspaceChanged(() => this.update()));
-        this.toDispose.push(this.workspaceService.onWorkspaceLocationChanged(() => this.update()));
+        this.toDispose.push(this.manager.onDidChange(() => {
+            console.error('!!! DebugConfigurationWidget +++ this.manager.onDidChange ');
+            this.update();
+        }));
+        this.toDispose.push(this.workspaceService.onWorkspaceChanged(() => {
+            console.error('!!! DebugConfigurationWidget +++ this.workspaceService.onWorkspaceChanged ');
+            this.update();
+        }));
+        this.toDispose.push(this.workspaceService.onWorkspaceLocationChanged(() => {
+            console.error('!!! DebugConfigurationWidget +++ this.workspaceService.onWorkspaceLocationChanged ');
+            this.update();
+        }));
         this.scrollOptions = undefined;
         this.update();
     }

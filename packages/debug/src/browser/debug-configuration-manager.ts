@@ -93,7 +93,7 @@ export class DebugConfigurationManager {
     protected updateModels = debounce(async () => {
         console.error('==== DEBUG CONFIG MANAGER === update models ');
         const roots = await this.workspaceService.roots;
-        console.error('==== DEBUG CONFIG MANAGER === update models ', JSON.stringify(roots));
+        console.error('==== DEBUG CONFIG MANAGER === update models ', roots);
         const toDelete = new Set(this.models.keys());
         for (const rootStat of roots) {
             const key = rootStat.resource.toString();
