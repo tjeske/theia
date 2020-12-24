@@ -115,9 +115,13 @@ export abstract class PreferenceProvider implements Disposable {
     protected fireDidPreferencesChanged = debounce(() => {
         const changes = this.deferredChanges;
         this.deferredChanges = undefined;
+        console.error('******************** fireDidPreferencesChanged ');
         if (changes && Object.keys(changes).length) {
+            console.error('******************** preference *** provider.onDidPreferencesChanged ');
             this.onDidPreferencesChangedEmitter.fire(changes);
             return true;
+        } else {
+            console.error('******************** fireDidPreferencesChanged *** NO changes ', changes);
         }
         return false;
     }, 0);

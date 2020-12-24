@@ -276,9 +276,12 @@ export class PreferenceServiceImpl implements PreferenceService {
     protected readonly preferenceProviders = new Map<PreferenceScope, PreferenceProvider>();
 
     protected async initializeProviders(): Promise<void> {
+        console.error('+++++++++++++++++++ initializeProviders ');
         try {
             for (const scope of PreferenceScope.getScopes()) {
+                console.error('++++ initializeProviders ++++ scope ', scope);
                 const provider = this.providerProvider(scope);
+                console.error('++++ initializeProviders ++++ provider ', provider);
                 this.preferenceProviders.set(scope, provider);
                 this.toDispose.push(provider.onDidPreferencesChanged(changes => {
                     console.error('+++++++++++++ provider.onDidPreferencesChanged ');

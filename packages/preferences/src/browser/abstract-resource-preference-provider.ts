@@ -52,7 +52,9 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
 
     @postConstruct()
     protected async init(): Promise<void> {
+        console.error(' ++++++++++++ abstract-resource-provider +++ INIT ');
         const uri = this.getUri();
+        console.error(' ++++++++++++ abstract-resource-provider +++ INIT +++ uri ', uri);
         this.toDispose.push(Disposable.create(() => this.loading.reject(new Error(`preference provider for '${uri}' was disposed`))));
         this._ready.resolve();
 
@@ -69,7 +71,10 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
         this.toDispose.push(Disposable.create(() => this.model = undefined));
 
         this.readPreferences();
-        this.toDispose.push(this.model.onDidChangeContent(() => this.readPreferences()));
+        this.toDispose.push(this.model.onDidChangeContent(() => {
+            console.error(' ++++++++++++ abstract-resource-provider +++ onDidChangeContent ');
+            this.readPreferences();
+        }));
         this.toDispose.push(this.model.onDirtyChanged(() => this.readPreferences()));
         this.toDispose.push(this.model.onDidChangeValid(() => this.readPreferences()));
 
@@ -170,8 +175,10 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
      * or any other operation modifying the monaco model content.
      */
     protected readPreferences(): void {
+        console.error(' ++++++++++++ abstract-resource-provider +++ readPreferences ');
         const model = this.model;
         if (!model || model.dirty) {
+            console.error(' ++++++++++++ abstract-resource-provider +++ readPreferences +++ RETURN ');
             return;
         }
         try {
@@ -179,12 +186,15 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
             if (model.valid) {
                 const content = model.getText();
                 preferences = this.getParsedContent(content);
+                console.error(' ++++++++++++ abstract-resource-provider +++ readPreferences +++ getParsedContent ');
             } else {
                 preferences = {};
+                console.error(' ++++++++++++ abstract-resource-provider +++ readPreferences +++ NOT getParsedContent ');
             }
             this.handlePreferenceChanges(preferences);
         } catch (e) {
             console.error(`Failed to load preferences from '${this.getUri()}'.`, e);
+            console.error(' ++++++++++++ abstract-resource-provider +++ readPreferences +++ ERROR ', e);
         }
     }
 
@@ -248,7 +258,10 @@ export abstract class AbstractResourcePreferenceProvider extends PreferenceProvi
         }
 
         if (prefChanges.length > 0) { // do not emit the change event if the pref value is not changed
+            console.error(' ++++++++++++ abstract-resource-provider +++ emitPreferencesChangedEvent ');
             this.emitPreferencesChangedEvent(prefChanges);
+        } else {
+            console.error(' ++++++++++++ abstract-resource-provider +++ NOT emitPreferencesChangedEvent ');
         }
     }
 
